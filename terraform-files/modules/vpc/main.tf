@@ -10,13 +10,17 @@ resource "aws_vpc" "myapp-vpc" {
   }
 }
 
+#data source for availability zones
+data "aws_availability_zones" "region-availability-zones" {
+  state = "available"
+}
 
 
 #create 1st public subnet
 resource "aws_subnet" "myapp-subnet-1" {
   vpc_id                  = aws_vpc.myapp-vpc.id
   cidr_block              = var.subnet_1_cidr_block
-  availability_zone       = var.availability_zone[0]
+  availability_zone       = data.aws_availability_zones.region-availability-zones.names[0]
   map_public_ip_on_launch = true
 
   tags = {
@@ -30,7 +34,7 @@ resource "aws_subnet" "myapp-subnet-1" {
 resource "aws_subnet" "myapp-subnet-2" {
   vpc_id                  = aws_vpc.myapp-vpc.id
   cidr_block              = var.subnet_2_cidr_block
-  availability_zone       = var.availability_zone[1]
+  availability_zone       = data.aws_availability_zones.region-availability-zones.names[1]
   map_public_ip_on_launch = true
 
   tags = {
